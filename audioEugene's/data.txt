@@ -1,0 +1,16 @@
+https://teachablemachine.withgoogle.com/models/QB0Jaikux/model.json
+
+https://unpkg.com/ml5@latest/dist/ml5.min.js
+
+https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js
+
+
+
+    fetch("http://localhost:3000/alert", {
+            method: "POST",
+            body: sendString,
+            headers: { "Content-Type": "application/json" },
+          })
+            .then((response) => response.json())
+            .then((json) => console.log(json))
+            .catch((err) => console.log(err));

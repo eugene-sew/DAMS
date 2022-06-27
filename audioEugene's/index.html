@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Emulation System for DAMS" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./tailwind.js"></script>
+    <!-- p5 -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
+
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script> -->
+    <!-- ml5 -->
+    <!-- axios -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script> -->
+    <script src="./external/tf.min.js"></script>
+    <script src="./external/speech-commands.min.js"></script>
+    <script src="./axios.min.js"></script>
+
+    <style>
+      .vert {
+        writing-mode: vertical-lr;
+      }
+    </style>
+    <title>DAMS concept</title>
+  </head>
+  <body>
+    <header
+      class="bg-white text-green-800 font-bold w-screen text-4xl px-4 py-2 shadow-lg"
+    >
+      <h1 class="title">DAMS Emulation Engine</h1>
+    </header>
+    <main
+      class="w-screen h-screen bg-green-700 text-white flex justify-center items-center flex-col"
+    >
+      <button onclick="sendAlert()">Manual Send</button>
+      <button onclick="getLocation()">Manual get</button>
+
+      <button
+        onclick="init()"
+        class="flex justify-center items-center gap-3 font-bold bg-green-400 shadow-lg rounded-lg h-fit w-fit px-3 py-2 hover:bg-green-500"
+      >
+        <span> Start Listening </span>
+        <span id="microphone">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
+            class="h-10 w-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+            />
+          </svg>
+        </span>
+      </button>
+
+      <div id="label-container"></div>
+
+      <!-- visualizer -->
+      <div class="mt-5 bg-white rounded-lg shadow-lg h-48 w-[400px] px-3 py-2">
+        <h1 class="text-green-800 font-bold text-lg">Visualizer</h1>
+        <div
+          class="h-fit w-full flex flex-col gap-3 items-center justify-evenly bg-white mt-2"
+        >
+          <div
+            class="h-10 w-full border-2 border-red-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
+          >
+            <div class="h-full w-0 bg-red-600" id="chainsaw"></div>
+            <span class="absolute top-2 left-5 text-gray-800"> Chainsaw</span>
+          </div>
+
+          <div
+            class="h-10 w-full border-2 border-green-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
+          >
+            <div class="h-full w-0 bg-green-600" id="forest"></div>
+            <span class="absolute top-2 left-5 text-gray-800">Forest</span>
+          </div>
+          <div
+            class="h-10 w-full border-2 border-gray-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
+          >
+            <div class="h-full w-0 bg-gray-600" id="noise"></div>
+            <span class="absolute top-2 left-5 text-gray-800"
+              >Background Noise</span
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- <script>
+      let audio;
+      let classifier;
+      let label = "waiting....";
+
+      //func to get all alerts ever sent
+      const getAlerts = async () => {
+        try {
+          const response = await axios.get("http://localhost:3001/get-alerts");
+          const alerts = response.data;
+
+          console.log(alerts);
+        } catch (err) {
+          alert("not sent");
+        }
+      };
+
+      function preload() {
+        classifier = ml5.soundClassifier(
+          "https://teachablemachine.withgoogle.com/models/QB0Jaikux/model.json"
+        );
+      }
+
+      function setup() {
+        classifyAudio();
+      }
+
+      function classifyAudio() {
+        classifier.classify(gotResults);
+      }
+
+      //function to get current device ID
+
+
+
+
+
+      //func that finalizes everything, waits for results from the audio and classifies it after which it sends alerts
+      function gotResults(error, results) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        console.log(results);
+        modelLabel = results[0].label;
+        confidence = results[0].confidence;
+        if (modelLabel === "chainsaw" && confidence >= 0.8) {
+          console.log(modelLabel, confidence);
+          //sendAlert();
+        } else if (modelLabel != "chainsaw" && confidence >= 0.8) {
+          console.log("not chainsaw");
+        }
+      }
+    </script> -->
+
+    <script>
+      const URL = "https://teachablemachine.withgoogle.com/models/AlE2VA77v/";
+      const sawBar = document.getElementById("chainsaw");
+      const forestBar = document.getElementById("forest");
+      const noiseBar = document.getElementById("forest");
+      var latitude;
+      var longitude;
+      //determines the location of current device
+      function getLocation() {
+        var location;
+
+        navigator.geolocation.getCurrentPosition((position) => {
+          longitude = position.coords.longitude;
+          latitude = position.coords.latitude;
+
+          location = { longitude, latitude };
+          console.log(location);
+          return location;
+        });
+      }
+
+      //function to send the alert
+      const sendAlert = async () => {
+        await getLocation();
+        const data = {
+          device_id: "DAMSEMU02",
+          lat: latitude,
+          long: longitude,
+        };
+
+        try {
+          const response = await axios.post(
+            "http://localhost:3001/alert",
+            data
+          );
+          console.log(response.data);
+        } catch (err) {
+          alert("Alert not Sent");
+        }
+      };
+
+      function formatAsPercent(num) {
+        const percentage = Math.floor(num * 100);
+        return percentage;
+      }
+
+      async function createModel() {
+        const checkpointURL = URL + "model.json"; // model topology
+        const metadataURL = URL + "metadata.json"; // model metadata
+
+        const recognizer = speechCommands.create(
+          "BROWSER_FFT", // fourier transform type, not useful to change
+          undefined, // speech commands vocabulary feature, not useful for your models
+          checkpointURL,
+          metadataURL
+        );
+
+        // check that model and metadata are loaded via HTTPS requests.
+        await recognizer.ensureModelLoaded();
+
+        return recognizer;
+      }
+
+      async function init() {
+        const recognizer = await createModel();
+        const classLabels = recognizer.wordLabels(); // get class labels
+        const labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < classLabels.length; i++) {
+          labelContainer.appendChild(document.createElement("div"));
+        }
+
+        recognizer.listen(
+          (result) => {
+            const scores = result.scores;
+            const backgroundNoiseLabel = classLabels[0];
+            const chainsawLabel = classLabels[1];
+            const forestSoundLabel = classLabels[3];
+
+            const backgroundNoiseScore = result.scores[0].toFixed(2);
+            const chainsawScore = result.scores[1].toFixed(2);
+            const forestSoundScore = result.scores[2].toFixed(2);
+
+            const backgroundNoisePercentage =
+              formatAsPercent(backgroundNoiseScore);
+            const chainsawPercentage = formatAsPercent(chainsawScore);
+            const forestSoundPercentage = formatAsPercent(forestSoundScore);
+
+            sawBar.classList.replace("w-0", `w-[${chainsawPercentage}%]`);
+
+            forestBar.classList.replace("w-0", `w-[${forestSoundPercentage}%]`);
+
+            noiseBar.classList.replace(
+              "w-0",
+              `w-[${backgroundNoisePercentage}%]`
+            );
+
+            for (let i = 0; i < classLabels.length; i++) {
+              const classPrediction =
+                classLabels[i] + ": " + result.scores[i].toFixed(2);
+
+              console.log(result.scores[i].toFixed(2));
+              labelContainer.childNodes[i].innerHTML = classPrediction;
+            }
+
+            if (chainsawScore >= 0.7) {
+              sendAlert();
+              alert("Alert Has been sent");
+            }
+          },
+          {
+            includeSpectrogram: true, // in case listen should return result.spectrogram
+            probabilityThreshold: 0.75,
+            invokeCallbackOnNoiseAndUnknown: true,
+            overlapFactor: 0.5, // probably want between 0.5 and 0.75. More info in README
+          }
+        );
+
+        // Stop the recognition in 5 seconds.
+        // setTimeout(() => recognizer.stopListening(), 5000);
+      }
+    </script>
+
+    <script></script>
+  </body>
+</html>

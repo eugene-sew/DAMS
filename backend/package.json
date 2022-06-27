@@ -1,0 +1,19 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^3.3.0",
+    "africastalking": "^0.5.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "prisma": "^3.3.0"
+  }
+}
