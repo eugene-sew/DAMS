@@ -4,7 +4,7 @@ const CORS = require("cors");
 const router = require("./routes");
 const prisma = new PrismaClient();
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(CORS({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));

@@ -20,7 +20,7 @@
 
     <title>DAMS concept</title>
   </head>
-  <body onload="getLocation()">
+  <body onload="">
     <header
       class="bg-white text-green-800 font-bold w-screen text-4xl px-4 py-2 shadow-lg"
     >
@@ -152,7 +152,7 @@
       const url3 = "https://teachablemachine.withgoogle.com/models/dLMyfR-23/";
       const sawBar = document.getElementById("chainsaw");
       const forestBar = document.getElementById("forest");
-      const noiseBar = document.getElementById("forest");
+      const noiseBar = document.getElementById("noise");
 
       //determines the location of current device
       function getLocation() {
@@ -177,8 +177,6 @@
         location = { longitude, latitude };
         return location;
       }
-
-
 
       //function to send the alert
       const sendAlert = async () => {
@@ -261,24 +259,22 @@
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
-            if (chainsawPercentage > 95) {
+            if (chainsawPercentage > 98 && forestSoundPercentage != 0) {
               sendAlert();
               alert("Alert Has been sent");
             }
           },
           {
-            includeSpectrogram: true, // in case listen should return result.spectrogram
+            includeSpectrogram: true,
             probabilityThreshold: 0.75,
             invokeCallbackOnNoiseAndUnknown: true,
-            overlapFactor: 0.5, // probably want between 0.5 and 0.75. More info in README
+            overlapFactor: 0.5,
           }
         );
 
         // Stop the recognition in 5 seconds.
-       // setTimeout(() => recognizer.stopListening(), 5000);
+        // setTimeout(() => recognizer.stopListening(), 5000);
       }
-
     </script>
-
   </body>
-</html
+</html>
