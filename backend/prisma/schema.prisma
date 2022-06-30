@@ -9,21 +9,86 @@ datasource db {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model alerts {
-  id         Int      @id @default(autoincrement())
-  device_id  String   @db.VarChar(255)
-  lat        Decimal  @db.Decimal(10, 8)
-  long       Decimal  @db.Decimal(10, 8)
-  time_stamp DateTime @default(now()) @db.DateTime(0)
+  id                    Int         @id @default(autoincrement())
+  device_id             String      @db.VarChar(255)
+  lat                   Decimal     @db.Decimal(10, 8)
+  long                  Decimal     @db.Decimal(10, 8)
+  time_stamp            DateTime    @default(now()) @db.DateTime(0)
+  status                Int?
+  status_alertsTostatus status?     @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "alerts_ibfk_1")
+  responses             responses[]
+
+  @@index([status], map: "status")
 }
 
 model agencies {
-  id Int @id @default(autoincrement())
+  id             Int         @default(autoincrement())
+  name           String      @db.VarChar(255)
+  contact_number String      @db.VarChar(255)
+  address        String      @db.VarChar(255)
+  c_name         String      @unique(map: "c_name") @db.VarChar(255)
+  leads          leads[]
+  officials      officials[]
+  responses      responses[]
+
+  @@id([id, c_name])
 }
 
 model roles {
-  id Int @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
+  role      String?     @db.VarChar(255)
+  officials officials[]
 }
 
-model users {
-  id Int @id @default(autoincrement())
+model leads {
+  id        Int        @id @default(autoincrement())
+  agency_id String?    @db.VarChar(255)
+  lead      String?    @db.VarChar(255)
+  agencies  agencies?  @relation(fields: [agency_id], references: [c_name], onDelete: NoAction, onUpdate: NoAction, map: "leads_ibfk_1")
+  officials officials? @relation(fields: [lead], references: [staff_id], onDelete: NoAction, onUpdate: NoAction, map: "leads_ibfk_2")
+
+  @@index([agency_id], map: "agency_id")
+  @@index([lead], map: "lead")
+}
+
+model officials {
+  id       Int       @default(autoincrement())
+  f_name   String    @db.VarChar(255)
+  l_name   String    @db.VarChar(255)
+  email    String    @db.VarChar(255)
+  phone    String    @db.VarChar(255)
+  agency   String?   @db.VarChar(255)
+  staff_id String    @unique(map: "staff_id") @db.VarChar(255)
+  role     Int
+  agencies agencies? @relation(fields: [agency], references: [c_name], onDelete: NoAction, onUpdate: NoAction, map: "officials_ibfk_3")
+  roles    roles     @relation(fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "officials_ibfk_2")
+  leads    leads[]
+
+  @@id([id, staff_id])
+  @@index([agency], map: "agency")
+  @@index([role], map: "role")
+}
+
+model responses {
+  id                       Int       @id @default(autoincrement())
+  alertID                  Int
+  responding_agency        String?   @db.VarChar(255)
+  response_timestamp       DateTime? @db.Timestamp(0)
+  status                   Int
+  to_pending               DateTime? @db.Timestamp(0)
+  to_resolved              DateTime? @db.Timestamp(0)
+  alerts                   alerts    @relation(fields: [alertID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "responses_ibfk_2")
+  agencies                 agencies? @relation(fields: [responding_agency], references: [c_name], onDelete: NoAction, onUpdate: NoAction, map: "responses_ibfk_3")
+  status_responsesTostatus status    @relation(fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "responses_ibfk_1")
+
+  @@index([alertID], map: "alertID")
+  @@index([responding_agency], map: "responding_agency")
+  @@index([status], map: "status")
+}
+
+model status {
+  id        Int         @id @default(autoincrement())
+  status    String?     @db.VarChar(255)
+  alerts    alerts[]
+  responses responses[]
 }

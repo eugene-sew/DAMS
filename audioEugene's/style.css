@@ -1,0 +1,17 @@
+.chainbar {
+  height: 100%;
+  width: 0%;
+  background-color: red;
+}
+
+.forebar {
+  height: 100%;
+  width: 0%;
+  background-color: green;
+}
+
+.noibar {
+  height: 100%;
+  width: 0%;
+  background-color: gray;
+}

@@ -5,6 +5,7 @@
     <meta name="description" content="Emulation System for DAMS" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <script src="./tailwind.js"></script>
     <!-- p5 -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
@@ -14,18 +15,12 @@
     <!-- axios -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script> -->
-    <script src="./external/tf.min.js"></script>
-    <script src="./external/speech-commands.min.js"></script>
-    <script src="./axios.min.js"></script>
+    <!-- <script src="./external/tf.min.js"></script>
+    <script src="./external/speech-commands.min.js"></script> -->
 
-    <style>
-      .vert {
-        writing-mode: vertical-lr;
-      }
-    </style>
     <title>DAMS concept</title>
   </head>
-  <body>
+  <body onload="getLocation()">
     <header
       class="bg-white text-green-800 font-bold w-screen text-4xl px-4 py-2 shadow-lg"
     >
@@ -64,28 +59,28 @@
       <div id="label-container"></div>
 
       <!-- visualizer -->
-      <div class="mt-5 bg-white rounded-lg shadow-lg h-48 w-[400px] px-3 py-2">
-        <h1 class="text-green-800 font-bold text-lg">Visualizer</h1>
+      <div class="mt-5 bg-white rounded-lg shadow-lg h-fit w-[400px] px-3 py-4">
+        <h1 class="text-green-800 font-bold text-lg">D.E.E Visualizer</h1>
         <div
           class="h-fit w-full flex flex-col gap-3 items-center justify-evenly bg-white mt-2"
         >
           <div
             class="h-10 w-full border-2 border-red-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="h-full w-0 bg-red-600" id="chainsaw"></div>
+            <div class="chainbar" id="chainsaw"></div>
             <span class="absolute top-2 left-5 text-gray-800"> Chainsaw</span>
           </div>
 
           <div
             class="h-10 w-full border-2 border-green-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="h-full w-0 bg-green-600" id="forest"></div>
+            <div class="forebar" id="forest"></div>
             <span class="absolute top-2 left-5 text-gray-800">Forest</span>
           </div>
           <div
             class="h-10 w-full border-2 border-gray-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="h-full w-0 bg-gray-600" id="noise"></div>
+            <div class="noibar" id="noise"></div>
             <span class="absolute top-2 left-5 text-gray-800"
               >Background Noise</span
             >
@@ -94,6 +89,7 @@
       </div>
     </main>
     <!-- <script>
+      old version
       let audio;
       let classifier;
       let label = "waiting....";
@@ -147,31 +143,46 @@
         }
       }
     </script> -->
-
+    <script src="./axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
     <script>
       const URL = "https://teachablemachine.withgoogle.com/models/AlE2VA77v/";
+      const url2 = "https://teachablemachine.withgoogle.com/models/QB0Jaikux/";
+      const url3 = "https://teachablemachine.withgoogle.com/models/dLMyfR-23/";
       const sawBar = document.getElementById("chainsaw");
       const forestBar = document.getElementById("forest");
       const noiseBar = document.getElementById("forest");
-      var latitude;
-      var longitude;
+
       //determines the location of current device
       function getLocation() {
+        var latitude = 6.5921838;
+        var longitude = 0.470069;
         var location;
-
-        navigator.geolocation.getCurrentPosition((position) => {
-          longitude = position.coords.longitude;
-          latitude = position.coords.latitude;
-
+        /*      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            longitude = position.coords.longitude;
+            latitude = position.coords.latitude;
+            location = { longitude, latitude };
+            console.log(location);
+          });
+        } else {
+          longitude = 6.5921838;
+          latitude = 0.470069;
           location = { longitude, latitude };
           console.log(location);
-          return location;
-        });
+        }
+        */
+
+        location = { longitude, latitude };
+        return location;
       }
+
+
 
       //function to send the alert
       const sendAlert = async () => {
-        await getLocation();
+        const { latitude, longitude } = await getLocation();
         const data = {
           device_id: "DAMSEMU02",
           lat: latitude,
@@ -195,8 +206,8 @@
       }
 
       async function createModel() {
-        const checkpointURL = URL + "model.json"; // model topology
-        const metadataURL = URL + "metadata.json"; // model metadata
+        const checkpointURL = url3 + "model.json"; // model topology
+        const metadataURL = url3 + "metadata.json"; // model metadata
 
         const recognizer = speechCommands.create(
           "BROWSER_FFT", // fourier transform type, not useful to change
@@ -221,6 +232,7 @@
 
         recognizer.listen(
           (result) => {
+            console.log(result);
             const scores = result.scores;
             const backgroundNoiseLabel = classLabels[0];
             const chainsawLabel = classLabels[1];
@@ -235,14 +247,11 @@
             const chainsawPercentage = formatAsPercent(chainsawScore);
             const forestSoundPercentage = formatAsPercent(forestSoundScore);
 
-            sawBar.classList.replace("w-0", `w-[${chainsawPercentage}%]`);
+            sawBar.style.width = chainsawPercentage + "%";
 
-            forestBar.classList.replace("w-0", `w-[${forestSoundPercentage}%]`);
+            forestBar.style.width = forestSoundPercentage + "%";
 
-            noiseBar.classList.replace(
-              "w-0",
-              `w-[${backgroundNoisePercentage}%]`
-            );
+            noiseBar.style.width = backgroundNoisePercentage + "%";
 
             for (let i = 0; i < classLabels.length; i++) {
               const classPrediction =
@@ -252,7 +261,7 @@
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
-            if (chainsawScore >= 0.7) {
+            if (chainsawPercentage > 95) {
               sendAlert();
               alert("Alert Has been sent");
             }
@@ -266,10 +275,10 @@
         );
 
         // Stop the recognition in 5 seconds.
-        // setTimeout(() => recognizer.stopListening(), 5000);
+       // setTimeout(() => recognizer.stopListening(), 5000);
       }
+
     </script>
 
-    <script></script>
   </body>
-</html>
+</html

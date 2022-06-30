@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAMS API</title>
+    <script src="./tailwind.js"></script>
+  </head>
+  <body class="bg-green-700 p-10">
+    <h1 class="text-3xl font-bold text-gray-700">DAMS API list</h1>
+    <main class="flex flex-col justify-center items-center">
+      <p
+        class="w-fit h-fit mx-6 bg-white text-gray-700 font-bold px-3 py-2 my-2 text-lg shadow-lg rounded"
+      >
+        Find the various endpoints and their functionalities as well as methods
+        applicable to them
+      </p>
+      <div class="flex flex-col md:flex-row gap-10 mb-10">
+        <dl class="flex flex-col gap-5 mt-8">
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /alert</code>
+            </dt>
+            <dd>methods: POST</dd>
+            <dd>description: send alerts to system</dd>
+            <dd>body: <code> {device_id,lat,long}</code></dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/add-user</code>
+            </dt>
+            <dd>methods: POST</dd>
+            <dd>
+              description: add an officiating officer and assign roles <br />
+              (special auth required)
+            </dd>
+            <dd>body: {f_name,l_name,email,phone,agency,staff_id,role}</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/add-agency</code>
+            </dt>
+            <dd>methods: POST</dd>
+            <dd>description: add agency</dd>
+            <dd>body:{ name, phone, address, code}</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/respond</code>
+            </dt>
+            <dd>methods: PUT</dd>
+            <dd>
+              description: update a response <br />
+              (special auth required)
+            </dd>
+            <dd>body: {id, agency, time,pending_time, resolved_time}</dd>
+          </div>
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/get-alerts</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get list of all alerts ever sent</dd>
+          </div>
+        </dl>
+
+        <dl class="flex flex-col gap-5 mt-8">
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/get-alerts/id</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get a specific alert with specified id</dd>
+          </div>
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/officials</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get a list of all officials</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /officials/id</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get a specific official by staff id</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/agencies</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get list of all agencies</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/get-responses</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get list of all responses</dd>
+          </div>
+
+          <div class="w-[400px] h-fit bg-white shadow-lg rounded-lg px-3 py-2">
+            <dt>
+              <code class="text-blue-700"> /api/get-responses/id</code>
+            </dt>
+            <dd>methods: GET</dd>
+            <dd>description: get a specific response with specified id</dd>
+          </div>
+        </dl>
+      </div>
+    </main>
+
+    <footer class="w-full text-center bottom-0">
+      powered with 🖤 by Advanced Forest Research Agency
+    </footer>
+  </body>
+</html>

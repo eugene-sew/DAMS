@@ -1,6 +1,7 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const CORS = require("cors");
+const router = require("./routes");
 const prisma = new PrismaClient();
 const app = express();
 const port = 3001;
@@ -35,6 +36,17 @@ const sendSMS = (lat, long, time) => {
   console.log(smsString);
 };
 
+const setResponse = async (id, status) => {
+  const response = await prisma.responses.create({
+    data: {
+      alertID: id,
+      status: status,
+    },
+  });
+
+  return response;
+};
+
 app.post("/alert", async (req, res) => {
   const { device_id, lat, long } = req.body;
   //   add this body data to the database
@@ -44,23 +56,24 @@ app.post("/alert", async (req, res) => {
         device_id,
         lat,
         long,
+        status: 1,
       },
     })
-    .then((response) => {
+    .then(async (response) => {
       const alert = response;
       //fire of sms sender function
       sendSMS(alert?.lat, alert?.long, alert?.time_stamp);
+      await setResponse(alert.id, alert.status);
       res.status(200).json(alert);
     })
     .catch((err) => {
-      res.json({ message: "could not send alert", err });
+      console.log(err);
+      res.json({ message: "could not send alert", err: err });
     });
 });
 
-app.get("/get-alerts", async (req, res) => {
-  const alerts = await prisma.alerts.findMany();
+app.use("/api/", router);
 
-  res.json(alerts);
-});
+app.use("/api-list", express.static("public"));
 
 app.listen(port, () => console.log(`live on port ${port}!`));
