@@ -93,7 +93,7 @@
       </div>
 
       <div>
-        <h1>Timer: <span id="timer">60000</span>ms</h1>
+        <h1>Timer: <span id="timer"></span>ms</h1>
       </div>
     </main>
     <!-- <script>
@@ -295,7 +295,7 @@
               /*sendAlert();
               alert("Alert Has been sent");
               */
-              timer = 60000;
+              timer = 3000;
 
               while (chainsawPercentage > 70) {
                 setInterval(() => {
@@ -310,9 +310,6 @@
                   alert("SMS sent");
                 }
               }
-            }
-
-            if (backgroundNoisePercentage > 80) {
             }
           },
           {
