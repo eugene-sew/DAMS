@@ -74,3 +74,18 @@ https://teachablemachine.withgoogle.com/models/[...]
         // setTimeout(() => recognizer.stopListening(), 5000);
     }
 </script>
+
+timer for system
+            if (backgroundNoisePercentage > 80) {
+              timer = 60000;
+              while (backgroundNoisePercentage > 70) {
+                setInterval(() => {
+                  timer -= 2;
+                  console.log(timer);
+                }, 1000);
+
+                if (timer === 0) {
+                  console.log("done");
+                }
+              }
+            }

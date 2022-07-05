@@ -2,6 +2,7 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const CORS = require("cors");
 const router = require("./routes");
+const { default: axios } = require("axios");
 const prisma = new PrismaClient();
 const app = express();
 const port = process.env.PORT || 3001;
@@ -14,26 +15,24 @@ app.use(express.json());
 const sendSMS = (lat, long, time) => {
   const mapString = `https://www.google.com.gh/maps/@${long},${lat},7z`;
   const smsString = `Logging Detected at this location: \n Latitude: ${lat}  \n Longitude: ${long} \n Time Detected: ${time} \n please take action \nclick to view location:(${mapString})`;
-  const credentials = {
-    apiKey: "e0e400d4d3001330b5d88db2db53ac02ae473b9306e01b6c3486479301aa82a4",
-    username: "Deforestation_alert_sms",
+
+  const apiKey = "435|SrJE2ycHmmOLkfmGsByYLkdqsfuDVHHtf5MhCkUF ";
+  const apiUrl = "https://www.webapp.usmsgh.com/api/sms/send";
+
+  const config = {
+    headers: { Authorization: `Bearer ${apiKey}` },
   };
-  const AfricasTalking = require("africastalking")(credentials);
-  const sms = AfricasTalking.SMS;
-  const options = {
-    to: "+233541638748",
+
+  const bodyParameters = {
+    recipient: "233541638748",
+    sender_id: "DAMS-GHANA",
     message: smsString,
   };
 
-  sms
-    .send(options)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  console.log(smsString);
+  axios
+    .post(apiUrl, bodyParameters, config)
+    .then(console.log)
+    .catch(console.log);
 };
 
 const setResponse = async (id, status) => {

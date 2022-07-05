@@ -12,6 +12,7 @@
   "dependencies": {
     "@prisma/client": "^3.3.0",
     "africastalking": "^0.5.5",
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "prisma": "^3.3.0"

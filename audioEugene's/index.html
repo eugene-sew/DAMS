@@ -20,7 +20,7 @@
 
     <title>DAMS concept</title>
   </head>
-  <body onload="">
+  <body>
     <header
       class="bg-white text-green-800 font-bold w-screen text-4xl px-4 py-2 shadow-lg"
     >
@@ -29,7 +29,7 @@
     <main
       class="w-screen h-screen bg-green-700 text-white flex justify-center items-center flex-col"
     >
-      <button onclick="sendAlert()">Manual Send</button>
+      <button onclick="sendSMS()">Override SMS</button>
       <button onclick="getLocation()">Manual get</button>
 
       <button
@@ -68,24 +68,32 @@
             class="h-10 w-full border-2 border-red-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
             <div class="chainbar" id="chainsaw"></div>
-            <span class="absolute top-2 left-5 text-gray-800"> Chainsaw</span>
+            <div class="absolute top-2 left-5 text-gray-800">
+              Chainsaw <span id="call"></span>
+            </div>
           </div>
 
           <div
             class="h-10 w-full border-2 border-green-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
             <div class="forebar" id="forest"></div>
-            <span class="absolute top-2 left-5 text-gray-800">Forest</span>
+            <div class="absolute top-2 left-5 text-gray-800">
+              Forest: <span id="call2"></span>
+            </div>
           </div>
           <div
             class="h-10 w-full border-2 border-gray-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
             <div class="noibar" id="noise"></div>
-            <span class="absolute top-2 left-5 text-gray-800"
-              >Background Noise</span
-            >
+            <div class="absolute top-2 left-5 text-gray-800">
+              Background Noise: <span id="call3"></span>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div>
+        <h1>Timer:900000ms</h1>
       </div>
     </main>
     <!-- <script>
@@ -153,30 +161,50 @@
       const sawBar = document.getElementById("chainsaw");
       const forestBar = document.getElementById("forest");
       const noiseBar = document.getElementById("noise");
+      const sawBarText = document.getElementById("call");
+      const forestBarText = document.getElementById("call2");
+      const noiseBarText = document.getElementById("call3");
 
       //determines the location of current device
       function getLocation() {
-        var latitude = 6.5921838;
-        var longitude = 0.470069;
         var location;
-        /*      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            longitude = position.coords.longitude;
-            latitude = position.coords.latitude;
-            location = { longitude, latitude };
-            console.log(location);
-          });
-        } else {
-          longitude = 6.5921838;
-          latitude = 0.470069;
+        navigator.geolocation.getCurrentPosition((position) => {
+          var longitude = position.coords.longitude;
+          var latitude = position.coords.latitude;
           location = { longitude, latitude };
-          console.log(location);
-        }
-        */
-
-        location = { longitude, latitude };
-        return location;
+        });
       }
+
+      //send sms from browser
+      const sendSMS = async () => {
+        // console.log(await getLocation());
+        const time = new Date();
+        navigator.geolocation.getCurrentPosition((position) => {
+          var longitude = position.coords.longitude;
+          var latitude = position.coords.latitude;
+
+          const mapString = `https://www.google.com.gh/maps/@${latitude},${longitude},20.08z`;
+          const smsString = `Logging Detected at this location: \n Latitude: ${latitude}  \n Longitude: ${longitude} \n Time Detected: ${time} \n please take action \nclick to view location:(${mapString})`;
+
+          const apiKey = "435|SrJE2ycHmmOLkfmGsByYLkdqsfuDVHHtf5MhCkUF ";
+          const apiUrl = "https://www.webapp.usmsgh.com/api/sms/send";
+
+          const config = {
+            headers: { Authorization: `Bearer ${apiKey}` },
+          };
+
+          const bodyParameters = {
+            recipient: "233541638748",
+            sender_id: "DAMS-GHANA",
+            message: smsString,
+          };
+
+          axios
+            .post(apiUrl, bodyParameters, config)
+            .then(console.log)
+            .catch(console.log);
+        });
+      };
 
       //function to send the alert
       const sendAlert = async () => {
@@ -230,12 +258,13 @@
 
         recognizer.listen(
           (result) => {
-            console.log(result);
+            //console.log(result);
+            console.log("performing inference");
             const scores = result.scores;
             const backgroundNoiseLabel = classLabels[0];
             const chainsawLabel = classLabels[1];
             const forestSoundLabel = classLabels[3];
-
+            let timer;
             const backgroundNoiseScore = result.scores[0].toFixed(2);
             const chainsawScore = result.scores[1].toFixed(2);
             const forestSoundScore = result.scores[2].toFixed(2);
@@ -246,22 +275,41 @@
             const forestSoundPercentage = formatAsPercent(forestSoundScore);
 
             sawBar.style.width = chainsawPercentage + "%";
+            sawBarText.innerText = chainsawPercentage + "%";
 
             forestBar.style.width = forestSoundPercentage + "%";
+            forestBarText.innerText = forestSoundPercentage + "%";
 
             noiseBar.style.width = backgroundNoisePercentage + "%";
-
+            noiseBarText.innerText = backgroundNoisePercentage + "%";
             for (let i = 0; i < classLabels.length; i++) {
               const classPrediction =
                 classLabels[i] + ": " + result.scores[i].toFixed(2);
 
-              console.log(result.scores[i].toFixed(2));
+              //console.log(result.scores[i].toFixed(2));
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
-            if (chainsawPercentage > 98 && forestSoundPercentage != 0) {
-              sendAlert();
+            if (chainsawPercentage > 93 && forestSoundPercentage != 0) {
+              /*sendAlert();
               alert("Alert Has been sent");
+              */
+              timer = 60000;
+              while (backgroundNoisePercentage > 70) {
+                setInterval(() => {
+                  timer -= 2;
+                  console.log(timer);
+                }, 1000);
+
+                if (timer === 0) {
+                  console.log("done");
+                  sendSMS();
+                  alert("SMS sent");
+                }
+              }
+            }
+
+            if (backgroundNoisePercentage > 80) {
             }
           },
           {
