@@ -340,14 +340,12 @@
             }
 
             if (chainsawPercentage > 90) {
-              /*sendAlert();
-              alert("Alert Has been sent");
-              */
-              timer = 3000;
+              timer = 30000;
 
+              //timer starts here
               while (chainsawPercentage > 70) {
                 setInterval(() => {
-                  timer -= 2;
+                  timer--;
                   timerEl.innerText = timer;
                   console.log(timer);
                 }, 1000);
