@@ -93,7 +93,7 @@
       </div>
 
       <div>
-        <h1>Timer:900000ms</h1>
+        <h1>Timer: <span id="timer">60000</span>ms</h1>
       </div>
     </main>
     <!-- <script>
@@ -164,6 +164,7 @@
       const sawBarText = document.getElementById("call");
       const forestBarText = document.getElementById("call2");
       const noiseBarText = document.getElementById("call3");
+      const timerEl = document.getElementById("timer");
 
       //determines the location of current device
       function getLocation() {
@@ -194,7 +195,7 @@
           };
 
           const bodyParameters = {
-            recipient: "233541638748",
+            recipient: ["233541638748", "233543352382"],
             sender_id: "DAMS-GHANA",
             message: smsString,
           };
@@ -290,14 +291,16 @@
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
-            if (chainsawPercentage > 93 && forestSoundPercentage != 0) {
+            if (chainsawPercentage > 90) {
               /*sendAlert();
               alert("Alert Has been sent");
               */
               timer = 60000;
-              while (backgroundNoisePercentage > 70) {
+
+              while (chainsawPercentage > 70) {
                 setInterval(() => {
                   timer -= 2;
+                  timerEl.innerText = timer;
                   console.log(timer);
                 }, 1000);
 
