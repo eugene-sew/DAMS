@@ -142,6 +142,8 @@
       <div>
         <h1>Timer: <span id="timer">0</span>ms</h1>
       </div>
+
+      <div id="snackbar">Message Sent..</div>
     </main>
     <!-- <script>
       old version
@@ -213,6 +215,14 @@
       const forestBarText = document.getElementById("call2");
       const noiseBarText = document.getElementById("call3");
       const timerEl = document.getElementById("timer");
+      var snackbar = document.getElementById("snackbar");
+
+      const showSnack = () => {
+        snackbar.className = "show";
+        setTimeout(function () {
+          snackbar.className = snackbar.className.replace("show", "");
+        }, 3000);
+      };
 
       //determines the location of current device
       function getLocation() {
@@ -250,7 +260,10 @@
 
           axios
             .post(apiUrl, bodyParameters, config)
-            .then(console.log)
+            .then((res) => {
+              console.log(res);
+              showSnack();
+            })
             .catch(console.log);
         });
       };
