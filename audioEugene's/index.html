@@ -83,7 +83,7 @@
         onclick="init()"
         class="flex justify-center items-center gap-3 font-bold bg-green-400 shadow-lg rounded-lg h-fit w-fit px-3 py-2 hover:bg-green-500"
       >
-        <span> Start Listening </span>
+        <span id="btnText"> Start Listening </span>
         <span id="microphone">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -180,9 +180,6 @@
       //function to get current device ID
 
 
-
-
-
       //func that finalizes everything, waits for results from the audio and classifies it after which it sends alerts
       function gotResults(error, results) {
         if (error) {
@@ -215,6 +212,7 @@
       const forestBarText = document.getElementById("call2");
       const noiseBarText = document.getElementById("call3");
       const timerEl = document.getElementById("timer");
+      const btnText = document.getElementById("btnText");
       var snackbar = document.getElementById("snackbar");
 
       const showSnack = () => {
@@ -322,6 +320,7 @@
           (result) => {
             //console.log(result);
             console.log("performing inference");
+            btnText.innerText = "Listening";
             const scores = result.scores;
             const backgroundNoiseLabel = classLabels[0];
             const chainsawLabel = classLabels[1];
@@ -354,10 +353,10 @@
 
             if (chainsawPercentage > 90) {
               timer = 30000;
-              sendSMS();
-              alert("SMS sent");
+              // sendSMS();
+              // alert("SMS sent");
               //timer starts here
-              /*              while (chainsawPercentage > 70) {
+              while (chainsawPercentage > 70) {
                 setInterval(() => {
                   timer--;
                   timerEl.innerText = timer;
@@ -369,7 +368,7 @@
                   sendSMS();
                   alert("SMS sent");
                 }
-           } */
+              }
             }
           },
           {
