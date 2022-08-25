@@ -354,9 +354,10 @@
 
             if (chainsawPercentage > 90) {
               timer = 30000;
-
+              sendSMS();
+              alert("SMS sent");
               //timer starts here
-              while (chainsawPercentage > 70) {
+              /*              while (chainsawPercentage > 70) {
                 setInterval(() => {
                   timer--;
                   timerEl.innerText = timer;
@@ -368,7 +369,7 @@
                   sendSMS();
                   alert("SMS sent");
                 }
-              }
+           } */
             }
           },
           {
