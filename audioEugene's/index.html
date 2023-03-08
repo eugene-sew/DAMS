@@ -370,7 +370,7 @@
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
-            if (chainsawPercentage > 90) {
+            /*  if (chainsawPercentage > 90) {
               timer = 30000;
               while (chainsawPercentage > 70) {
                 setInterval(() => {
@@ -385,6 +385,11 @@
                   alert("SMS sent");
                 }
               }
+            }
+            */
+
+            if (chainsawPercentage > 80) {
+              sendSMS();
             }
           },
           {
