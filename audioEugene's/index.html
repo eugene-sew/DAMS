@@ -2,10 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Emulation System for DAMS" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <meta
+      name="description"
+      content="Emulation System for DAMS"
+    />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="style.css"
+    />
     <script src="./tailwind.js"></script>
     <!-- p5 -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js"></script>
@@ -114,7 +126,10 @@
           <div
             class="h-10 w-full border-2 border-red-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="chainbar" id="chainsaw"></div>
+            <div
+              class="chainbar"
+              id="chainsaw"
+            ></div>
             <div class="absolute top-2 left-5 text-gray-800">
               Chainsaw <span id="call"></span>
             </div>
@@ -123,7 +138,10 @@
           <div
             class="h-10 w-full border-2 border-green-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="forebar" id="forest"></div>
+            <div
+              class="forebar"
+              id="forest"
+            ></div>
             <div class="absolute top-2 left-5 text-gray-800">
               Forest: <span id="call2"></span>
             </div>
@@ -131,7 +149,10 @@
           <div
             class="h-10 w-full border-2 border-gray-600 rounded-t-2xl rounded-b-2xl shadow overflow-hidden relative"
           >
-            <div class="noibar" id="noise"></div>
+            <div
+              class="noibar"
+              id="noise"
+            ></div>
             <div class="absolute top-2 left-5 text-gray-800">
               Background Noise: <span id="call3"></span>
             </div>
@@ -318,7 +339,7 @@
 
         recognizer.listen(
           (result) => {
-            //console.log(result);
+            console.log(result);
             console.log("performing inference");
             btnText.innerText = "Listening";
             const scores = result.scores;
@@ -346,16 +367,11 @@
             for (let i = 0; i < classLabels.length; i++) {
               const classPrediction =
                 classLabels[i] + ": " + result.scores[i].toFixed(2);
-
-              //console.log(result.scores[i].toFixed(2));
               labelContainer.childNodes[i].innerHTML = classPrediction;
             }
 
             if (chainsawPercentage > 90) {
               timer = 30000;
-              // sendSMS();
-              // alert("SMS sent");
-              //timer starts here
               while (chainsawPercentage > 70) {
                 setInterval(() => {
                   timer--;
@@ -379,8 +395,9 @@
           }
         );
 
-        // Stop the recognition in 5 seconds.
-        // setTimeout(() => recognizer.stopListening(), 5000);
+        setTimeout(() => {
+          recognizer.stopListening();
+        }, 10000);
       }
     </script>
   </body>
